@@ -1,4 +1,4 @@
-// PESU ECE 3rd Sem AI Adaptive Engine v5.1
+// PESU ECE 3rd Sem AI Adaptive Engine v5.2
 
 let masterSchedule = {};
 let userProfile = {};
@@ -10,6 +10,15 @@ document.addEventListener("DOMContentLoaded", function () {
     if (dateInput) {
         dateInput.value = tomorrow.toISOString().split("T")[0];
     }
+
+    // Attach button event listeners safely to prevent CSP / onclick issues
+    document.getElementById("btn-next-1").addEventListener("click", () => nextWizardStep(2));
+    document.getElementById("btn-back-2").addEventListener("click", () => nextWizardStep(1));
+    document.getElementById("btn-next-2").addEventListener("click", () => nextWizardStep(3));
+    document.getElementById("btn-back-3").addEventListener("click", () => nextWizardStep(2));
+    document.getElementById("btn-finish").addEventListener("click", finishOnboarding);
+    document.getElementById("btn-reopen").addEventListener("click", reopenQuestionnaire);
+    document.getElementById("btn-recalibrate").addEventListener("click", recalibrateDay);
 
     try {
         const savedProfile = localStorage.getItem("pesu_ece_profile_v5");
@@ -185,15 +194,10 @@ function renderDayByDaySchedule() {
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-mono bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded font-bold">Day ${day.dayNum}</span>
                     <h4 class="text-xs font-bold text-white font-mono">${day.dateDisplay}</h4>
-                    ${day.isTravel ? '<span class="text-[10px] bg-amber-950 text-amber-400 px-2 py-0.5 rounded border border-amber-800 font-mono font-bold"><i class="fa-solid fa-plane"></i> TRAVEL DAY</span>' : ''}
-                    ${day.postISA ? '<span class="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800 font-mono">ISA 2 Goal Complete</span>' : ''}
+                    ${day.isTravel ? '<span class="text-[10px] bg-amber-950 text-amber-400 px-2 py-0.5 rounded border border-amber-800 font-mono font-bold">TRAVEL DAY</span>' : ''}
+                    ${day.postISA ? '<span class="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800 font-mono">ISA 2 Done</span>' : ''}
                 </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-xs text-slate-400 font-mono">${day.hours}h</span>
-                    <button onclick="openEditModal('${dateKey}')" class="text-xs text-amber-400 border border-amber-800 px-2 py-0.5 rounded bg-amber-950/40 font-mono">
-                        <i class="fa-solid fa-pen"></i> Edit
-                    </button>
-                </div>
+                <span class="text-xs text-slate-400 font-mono">${day.hours}h</span>
             </div>
             ${blocksHtml}
         `;
@@ -228,29 +232,4 @@ function recalibrateDay() {
     localStorage.setItem("pesu_ece_schedule_v5", JSON.stringify(masterSchedule));
     renderDayByDaySchedule();
     alert(`Recalibrated Day ${day.dayNum} (${dateKey})!`);
-}
-
-function openEditModal(dateKey) {
-    const day = masterSchedule[dateKey];
-    document.getElementById("edit-date-key").value = dateKey;
-    document.getElementById("edit-date-display").value = `Day ${day.dayNum} - ${day.dateDisplay}`;
-    document.getElementById("edit-p1-topic").value = day.block1.title;
-    document.getElementById("edit-p2-topic").value = day.block2.title;
-    document.getElementById("edit-day-modal").classList.remove("hidden");
-}
-
-function closeEditModal() {
-    document.getElementById("edit-day-modal").classList.add("hidden");
-}
-
-function saveManualDayEdit() {
-    const dateKey = document.getElementById("edit-date-key").value;
-    let day = masterSchedule[dateKey];
-
-    day.block1.title = document.getElementById("edit-p1-topic").value;
-    day.block2.title = document.getElementById("edit-p2-topic").value;
-
-    localStorage.setItem("pesu_ece_schedule_v5", JSON.stringify(masterSchedule));
-    renderDayByDaySchedule();
-    closeEditModal();
 }
