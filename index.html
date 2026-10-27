@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PESU ECE | AI Adaptive Study Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen">
+    
+    <!-- Top Header -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+        <div>
+            <h1 class="text-xl font-bold text-red-500 tracking-wide flex items-center gap-2">
+                <i class="fa-solid fa-microchip"></i> PESU RR Campus | 3rd Sem ECE AI Planner
+            </h1>
+            <p class="text-xs text-slate-400">Student: Om Shukla | Adaptive Stress-Free Engine v2.6</p>
+        </div>
+        <div class="flex gap-3">
+            <span class="bg-red-950 border border-red-800 text-red-300 px-3 py-1 rounded-full text-xs font-semibold">
+                <i class="fa-solid fa-brain"></i> AI Active
+            </span>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left Column: Goals & Inputs -->
+        <div class="space-y-6">
+            
+            <!-- Goal Tracker Card -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
+                <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye text-red-500"></i> Target Milestones
+                </h2>
+                <div class="space-y-3 text-sm">
+                    <div class="p-3 bg-slate-950 rounded-lg border border-slate-800">
+                        <div class="flex justify-between font-medium"><span>ISA 2 (Units 3 & 4)</span><span class="text-amber-400">Nov 21</span></div>
+                        <p class="text-xs text-slate-400 mt-1">Analog Circuits, Signals & Systems, Digital Design</p>
+                    </div>
+                    <div class="p-3 bg-slate-950 rounded-lg border border-slate-800">
+                        <div class="flex justify-between font-medium"><span>ESA (All 4 Units)</span><span class="text-red-400">Dec 02</span></div>
+                        <p class="text-xs text-slate-400 mt-1">Full syllabus mastery across core ECE subjects</p>
+                    </div>
+                    <div class="p-3 bg-slate-950 rounded-lg border border-slate-800">
+                        <div class="flex justify-between font-medium"><span>Backlogs (3 Subjects)</span><span class="text-emerald-400">Dec 31</span></div>
+                        <p class="text-xs text-slate-400 mt-1">Systematic clearing before year-end</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Intel & Schedule Input -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
+                <h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-day text-blue-500"></i> Today's Real Schedule & Intel
+                </h2>
+                <form id="daily-form" class="space-y-4 text-sm">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">College / Lab Hours Today</label>
+                        <input type="text" id="college-hours" placeholder="e.g., EC lab till 1 PM, free post 3 PM" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-red-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Energy & Fatigue Level (1-10)</label>
+                        <input type="range" id="energy-level" min="1" max="10" value="7" class="w-full accent-red-500" oninput="document.getElementById('energy-val').innerText = this.value">
+                        <div class="text-right text-xs text-slate-400 mt-1">Level: <span id="energy-val" class="text-white font-bold">7</span>/10</div>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Sudden Disruptions / Plan Changes</label>
+                        <textarea id="disruptions" rows="2" placeholder="e.g., Pop-up assignment submission or feeling exhausted..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-red-500"></textarea>
+                    </div>
+                    <button type="button" onclick="generateAISchedule()" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2 shadow-md">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Recalibrate Stress-Free Plan
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Right 2 Columns: Adaptive AI Plan Output -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- AI Dynamic Dashboard View -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-emerald-500"></i> Your AI-Optimized Action Plan for Today
+                    </h2>
+                    <span id="status-badge" class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-1 rounded-md">Optimized & Balanced</span>
+                </div>
+                
+                <!-- AI Coach Diagnostic Note -->
+                <div id="ai-insights" class="p-4 bg-slate-950 border border-slate-800 rounded-lg text-sm text-slate-300 mb-4">
+                    <p class="text-slate-400 italic">"Feed in your daily schedule on the left. The AI will build your custom time blocks, adjust for your energy level, and protect you from burnout while keeping your ISA, ESA, and Backlog deadlines firmly on track."</p>
+                </div>
+
+                <!-- Generated Schedule Slots -->
+                <div id="schedule-slots" class="space-y-3">
+                    <!-- Dynamic cards injected via JS -->
+                    <div class="p-4 bg-slate-950 border border-dashed border-slate-800 rounded-lg text-center text-slate-500 text-sm">
+                        Waiting for daily inputs to generate your customized ECE study roadmap...
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Analytics & Burnout Guard -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Burnout Protection Guard</h3>
+                    <p id="burnout-status" class="text-sm text-slate-200">Active. Heavy workload dynamically redistributed across open weekend gaps.</p>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">ECE Roadmap Pace</h3>
+                    <p id="roadmap-pace" class="text-sm text-slate-200">On schedule for Nov 21 ISA 2 & Dec 2 ESA milestones.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
