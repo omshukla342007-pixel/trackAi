@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PESU ECE | AI Adaptive Study Planner</title>
+    <title>PESU ECE | Neural Study Engine v5.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .neon-glow { box-shadow: 0 0 25px rgba(239, 68, 68, 0.2); }
-        .cyber-card { background: rgba(11, 15, 25, 0.9); border: 1px solid rgba(239, 68, 68, 0.3); backdrop-filter: blur(12px); }
+        .cyber-card { background: rgba(11, 15, 25, 0.92); border: 1px solid rgba(239, 68, 68, 0.3); backdrop-filter: blur(12px); }
         .cyber-input { background: #030712; border: 1px solid rgba(255, 255, 255, 0.15); color: #f3f4f6; }
         .cyber-input:focus { border-color: #ef4444; outline: none; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
-        /* Custom Scrollbar for Day Sidebar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #030712; }
         ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
@@ -20,178 +19,166 @@
 </head>
 <body class="bg-[#030712] text-slate-100 font-sans antialiased min-h-screen selection:bg-red-500 selection:text-white">
     
-    <!-- Guided AI Onboarding Modal -->
-    <div id="ai-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <!-- Guided Onboarding Modal -->
+    <div id="ai-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
         <div class="cyber-card rounded-2xl p-6 max-w-xl w-full neon-glow border border-red-500/50">
             <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
                 <h2 class="text-lg font-bold text-red-500 flex items-center gap-2">
-                    <i class="fa-solid fa-brain"></i> AI NEURAL CALIBRATION (ECE 3rd Sem)
+                    <i class="fa-solid fa-brain"></i> PESU ECE 3rd Sem AI Engine Setup
                 </h2>
                 <span id="modal-step-tag" class="text-xs font-mono bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded">Step 1 of 3</span>
             </div>
 
-            <!-- Step 1: Core ECE Subjects -->
+            <!-- Step 1: ECE Core Topics -->
             <div id="wizard-step-1" class="space-y-4">
-                <p class="text-xs text-slate-300">To create a realistic, stress-free plan from Day 1 to Dec 31, tell me about your ECE subjects:</p>
+                <p class="text-xs text-slate-300">Enter your core 3rd Sem ECE subject focus for ISA 2 & ESA:</p>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1 font-medium">Strong Topics (Fast learning, need less time)</label>
-                    <input type="text" id="q-strong" placeholder="e.g., Digital Logic, Basic Circuits" class="w-full cyber-input text-xs rounded-lg p-2.5">
+                    <label class="block text-xs text-slate-400 mb-1 font-medium">Strong Topics (Fast learning)</label>
+                    <input type="text" id="q-strong" value="Computer Aided Digital Design, Tech Writing" class="w-full cyber-input text-xs rounded-lg p-2.5">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1 font-medium">Weak / Tough Topics (Needs deep focus)</label>
-                    <input type="text" id="q-weak" placeholder="e.g., Signals & Systems, Analog Op-Amps" class="w-full cyber-input text-xs rounded-lg p-2.5">
+                    <label class="block text-xs text-slate-400 mb-1 font-medium">Weak / Math Intensive Topics</label>
+                    <input type="text" id="q-weak" value="Maths for ECE, Analog Circuits, Signals & Systems" class="w-full cyber-input text-xs rounded-lg p-2.5">
                 </div>
                 <button type="button" onclick="nextWizardStep(2)" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-xs font-mono flex items-center justify-center gap-2">
-                    Next: Backlogs & Syllabus <i class="fa-solid fa-arrow-right"></i>
+                    Next: Backlogs & Travel Dates <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
 
-            <!-- Step 2: Backlogs & Target Pace -->
+            <!-- Step 2: Backlogs & Travel -->
             <div id="wizard-step-2" class="space-y-4 hidden">
-                <p class="text-xs text-slate-300">Target details for your 3 Backlog subjects:</p>
+                <p class="text-xs text-slate-300">Set backlog details & travel blackouts:</p>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1 font-medium">Name your 3 Backlog Subjects</label>
-                    <input type="text" id="q-backlog-names" placeholder="e.g., Math 1, EDC, Network Theory" class="w-full cyber-input text-xs rounded-lg p-2.5">
+                    <label class="block text-xs text-slate-400 mb-1 font-medium">Your 3 Backlog Subjects</label>
+                    <input type="text" id="q-backlog-names" placeholder="e.g., Math 1, Network Theory, EDC" class="w-full cyber-input text-xs rounded-lg p-2.5">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1 font-medium">Baseline Daily Study Time Goal (Hours)</label>
-                    <input type="number" id="q-daily-hours" min="1" max="10" value="3.5" step="0.5" class="w-full cyber-input text-xs rounded-lg p-2.5">
+                    <label class="block text-xs text-slate-400 mb-1 font-medium">Travel Dates Blackout</label>
+                    <input type="text" value="Nov 6 & Nov 10 (Travel Days Locked)" readonly class="w-full cyber-input text-xs rounded-lg p-2.5 text-amber-400 font-mono">
                 </div>
                 <div class="flex gap-2">
                     <button type="button" onclick="nextWizardStep(1)" class="w-1/3 bg-slate-800 text-slate-300 text-xs py-2.5 rounded-lg font-mono">Back</button>
-                    <button type="button" onclick="nextWizardStep(3)" class="w-2/3 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-xs font-mono">Next: Preferred Schedule <i class="fa-solid fa-arrow-right"></i></button>
+                    <button type="button" onclick="nextWizardStep(3)" class="w-2/3 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-xs font-mono">Next: Study Target <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
             </div>
 
-            <!-- Step 3: Preferred Daily Windows & Final Generate -->
+            <!-- Step 3: Hours & Goal Sunset Rule -->
             <div id="wizard-step-3" class="space-y-4 hidden">
-                <p class="text-xs text-slate-300">Final setup: Preferred daily study windows:</p>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1 font-medium">Main Study Time Window</label>
-                    <select id="q-time-window" class="w-full cyber-input text-xs rounded-lg p-2.5">
-                        <option value="EVENING">Late Afternoon & Evening (4 PM - 10 PM)</option>
-                        <option value="NIGHT">Night Owl (8 PM - 1 AM)</option>
-                        <option value="EARLY_MORNING">Early Morning (5 AM - 9 AM)</option>
-                    </select>
+                    <label class="block text-xs text-slate-400 mb-1 font-medium">Baseline Daily Study Hours Target</label>
+                    <input type="number" id="q-daily-hours" min="1" max="10" value="3.5" step="0.5" class="w-full cyber-input text-xs rounded-lg p-2.5">
                 </div>
-                <div class="p-3 bg-[#030712] rounded-lg border border-slate-800 text-xs text-slate-400">
-                    <i class="fa-solid fa-shield-halved text-emerald-400"></i> AI Promise: All deadlines (Nov 21 ISA 2, Dec 02 ESA, Dec 31 Backlogs) will start receiving daily focus from <strong>Day 1 (Oct 28)</strong> simultaneously.
+                <div class="p-3 bg-[#030712] rounded-lg border border-slate-800 text-xs text-slate-300 space-y-1">
+                    <div class="font-bold text-emerald-400"><i class="fa-solid fa-rotate text-emerald-400"></i> Automatic Goal Re-Allocation Rule:</div>
+                    <p class="text-[11px] text-slate-400">After <strong>Nov 28 (ISA 2 LWD)</strong>, the ISA 2 goal stops completely. All study time automatically shifts to <strong>ESA Prep + Backlogs</strong>.</p>
                 </div>
                 <div class="flex gap-2">
                     <button type="button" onclick="nextWizardStep(2)" class="w-1/3 bg-slate-800 text-slate-300 text-xs py-2.5 rounded-lg font-mono">Back</button>
                     <button type="button" onclick="finishOnboarding()" class="w-2/3 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold py-2.5 rounded-lg text-xs font-mono shadow-lg flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Master Plan
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Build Adaptive Master Plan
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main Navigation Header -->
+    <!-- Header -->
     <header class="bg-[#0b0f19]/90 border-b border-red-900/30 sticky top-0 z-40 px-6 py-4 flex justify-between items-center backdrop-blur-md">
         <div class="flex items-center gap-3">
             <div class="h-3 w-3 bg-red-500 rounded-full animate-pulse"></div>
             <div>
                 <h1 class="text-lg font-extrabold tracking-wider text-red-500 flex items-center gap-2">
-                    <i class="fa-solid fa-microchip"></i> PESU RR | ECE NEURAL PLANNER v4.0
+                    <i class="fa-solid fa-microchip"></i> PESU RR | ECE NEURAL PLANNER v5.0
                 </h1>
-                <p class="text-xs text-slate-400">Student: Om Shukla (3rd Sem ECE) | Day 1 $\rightarrow$ Dec 31 Engine</p>
+                <p class="text-xs text-slate-400">Student: Om Shukla (3rd Sem ECE) | Integrated Calendar & Timetable</p>
             </div>
         </div>
         <div class="flex items-center gap-3">
             <button onclick="reopenQuestionnaire()" class="text-xs text-slate-400 hover:text-red-400 transition flex items-center gap-1 font-mono">
-                <i class="fa-solid fa-sliders"></i> Re-Calibrate AI Baseline
+                <i class="fa-solid fa-sliders"></i> Re-Calibrate AI
             </button>
             <span class="bg-red-950/80 border border-red-800 text-red-400 px-3 py-1 rounded-full text-xs font-mono font-semibold flex items-center gap-1.5">
-                <i class="fa-solid fa-brain"></i> AI ONLINE
+                <i class="fa-solid fa-brain"></i> AI ACTIVE
             </span>
         </div>
     </header>
 
-    <!-- Main Grid Dashboard -->
     <main class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- Left Panel: Today's Dynamic Input & Deadline Lock (4 Cols) -->
+        <!-- Left Sidebar: Recalibrate & Milestones (4 Cols) -->
         <div class="lg:col-span-4 space-y-6">
             
-            <!-- Daily Recalibration Card -->
+            <!-- Daily Log & Recalibrate -->
             <div class="cyber-card rounded-xl p-5 shadow-2xl">
                 <h2 class="text-md font-bold text-white mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-bolt text-amber-400"></i> Daily Schedule & Energy Log
+                    <i class="fa-solid fa-bolt text-amber-400"></i> Today's Schedule Log
                 </h2>
                 <form id="daily-log-form" class="space-y-3 text-xs">
                     <div>
-                        <label class="block text-slate-400 mb-1 font-medium">Select Date to Recalibrate</label>
+                        <label class="block text-slate-400 mb-1 font-medium">Select Date</label>
                         <input type="date" id="log-date" class="w-full cyber-input rounded-lg p-2.5 font-mono">
-                    </div>
-                    <div>
-                        <label class="block text-slate-400 mb-1 font-medium">College / Lab Schedule Today</label>
-                        <input type="text" id="log-schedule" placeholder="e.g., Lab till 1 PM, Free after 3 PM" class="w-full cyber-input rounded-lg p-2.5">
                     </div>
                     <div>
                         <label class="block text-slate-400 mb-1 font-medium">Energy / Fatigue Level (1 = Exhausted, 10 = Peak)</label>
                         <input type="range" id="log-energy" min="1" max="10" value="7" class="w-full accent-red-500" oninput="document.getElementById('energy-val').innerText = this.value">
-                        <div class="text-right text-slate-400 mt-1 font-mono">Energy Level: <span id="energy-val" class="text-white font-bold">7</span>/10</div>
+                        <div class="text-right text-slate-400 mt-1 font-mono">Energy: <span id="energy-val" class="text-white font-bold">7</span>/10</div>
                     </div>
                     <div>
-                        <label class="block text-slate-400 mb-1 font-medium">Sudden Disruption / Change of Plans</label>
-                        <textarea id="log-disruption" rows="2" placeholder="e.g., Emergency assignment submission or feeling sick..." class="w-full cyber-input rounded-lg p-2.5"></textarea>
+                        <label class="block text-slate-400 mb-1 font-medium">Sudden Disruption / Travel Notes</label>
+                        <textarea id="log-disruption" rows="2" placeholder="e.g., Travel delay, extra assignment..." class="w-full cyber-input rounded-lg p-2.5"></textarea>
                     </div>
                     <button type="button" onclick="recalibrateDay()" class="w-full bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-bold py-3 rounded-lg transition shadow-lg flex items-center justify-center gap-2 font-mono text-sm">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> RECALIBRATE PLAN
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> RECALIBRATE DAY
                     </button>
                 </form>
             </div>
 
-            <!-- Target Milestones Tracker -->
+            <!-- Milestone Deadlines -->
             <div class="cyber-card rounded-xl p-5 shadow-xl font-mono text-xs space-y-2.5">
                 <div class="text-slate-400 font-bold mb-1 uppercase tracking-wider flex items-center gap-1.5">
-                    <i class="fa-solid fa-lock text-red-500"></i> Locked Target Deadlines
+                    <i class="fa-solid fa-calendar text-red-500"></i> Locked Academic Calendar
                 </div>
                 <div class="flex justify-between items-center p-2.5 bg-[#030712] rounded border border-slate-800">
                     <div>
-                        <strong class="text-white">ISA 2</strong> (Units 3 & 4)
-                        <div class="text-[10px] text-slate-400">Starts Day 1</div>
+                        <strong class="text-white">ISA 2 Week</strong>
+                        <div class="text-[10px] text-slate-400">Nov 23 - Nov 28</div>
                     </div>
-                    <span class="text-amber-400 font-bold" id="cd-isa">Nov 21</span>
+                    <span class="text-amber-400 font-bold">Units III & IV</span>
                 </div>
                 <div class="flex justify-between items-center p-2.5 bg-[#030712] rounded border border-slate-800">
                     <div>
-                        <strong class="text-white">ESA</strong> (4 Units)
-                        <div class="text-[10px] text-slate-400">Starts Day 1</div>
+                        <strong class="text-white">ESA Exams</strong>
+                        <div class="text-[10px] text-slate-400">Dec 03 - Dec 30</div>
                     </div>
-                    <span class="text-red-400 font-bold" id="cd-esa">Dec 02</span>
+                    <span class="text-red-400 font-bold">All Units</span>
                 </div>
                 <div class="flex justify-between items-center p-2.5 bg-[#030712] rounded border border-slate-800">
                     <div>
-                        <strong class="text-white">Backlogs</strong> (3 Subjects)
-                        <div class="text-[10px] text-slate-400">Starts Day 1</div>
+                        <strong class="text-white">Backlogs Target</strong>
+                        <div class="text-[10px] text-slate-400">Dec 31 Hard Stop</div>
                     </div>
-                    <span class="text-emerald-400 font-bold" id="cd-backlog">Dec 31</span>
+                    <span class="text-emerald-400 font-bold">3 Subjects</span>
                 </div>
             </div>
 
         </div>
 
-        <!-- Right Panel: Full Day-by-Day Interactive Sidebar (8 Cols) -->
+        <!-- Right Panel: Day-by-Day Master Schedule (8 Cols) -->
         <div class="lg:col-span-8 space-y-6">
             
             <div class="cyber-card rounded-xl p-6 shadow-2xl">
                 <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
                     <div>
                         <h2 class="text-md font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-calendar-days text-emerald-400"></i> Day-by-Day Master Schedule (Oct 28 $\rightarrow$ Dec 31)
+                            <i class="fa-solid fa-calendar-days text-emerald-400"></i> Adaptive Day-by-Day Roadmap
                         </h2>
-                        <p class="text-xs text-slate-400 mt-0.5">All 3 targets active simultaneously from Day 1. Click 'Edit' on any day to customize.</p>
+                        <p class="text-xs text-slate-400 mt-0.5">ISA 2 sunsets after Nov 28. Travel logged for Nov 6 & 10.</p>
                     </div>
-                    <span id="total-days-badge" class="text-xs font-mono bg-red-950 text-red-400 border border-red-800 px-2.5 py-1 rounded">65 Days Active</span>
+                    <span id="total-days-badge" class="text-xs font-mono bg-red-950 text-red-400 border border-red-800 px-2.5 py-1 rounded">65 Days</span>
                 </div>
 
-                <!-- Day-by-Day Scrollable List -->
-                <div id="day-by-day-container" class="space-y-4 max-h-[700px] overflow-y-auto pr-2">
-                    <div class="p-4 bg-[#030712] border border-dashed border-slate-800 rounded-lg text-center text-slate-500 text-xs font-mono">
-                        Awaiting initial calibration... Fill out the AI questionnaire to generate your day-by-day roadmap.
-                    </div>
+                <div id="day-by-day-container" class="space-y-4 max-h-[720px] overflow-y-auto pr-2">
+                    <!-- Dynamic rendering by app.js -->
                 </div>
             </div>
 
@@ -199,12 +186,12 @@
 
     </main>
 
-    <!-- Manual Day Edit Modal -->
+    <!-- Edit Modal -->
     <div id="edit-day-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="cyber-card rounded-2xl p-6 max-w-lg w-full neon-glow border border-amber-500/50">
             <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
                 <h3 class="text-md font-bold text-amber-400 flex items-center gap-2">
-                    <i class="fa-solid fa-pen-to-square"></i> Manual Day Editor
+                    <i class="fa-solid fa-pen-to-square"></i> Edit Schedule Slot
                 </h3>
                 <button onclick="closeEditModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -215,16 +202,12 @@
                     <input type="text" id="edit-date-display" readonly class="w-full cyber-input rounded-lg p-2 font-mono text-slate-400">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">ISA 2 Focus Subject / Topic</label>
-                    <input type="text" id="edit-isa-topic" class="w-full cyber-input rounded-lg p-2.5">
+                    <label class="block text-slate-400 mb-1">Primary Study Block Title</label>
+                    <input type="text" id="edit-p1-topic" class="w-full cyber-input rounded-lg p-2.5">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">ESA Prep Topic</label>
-                    <input type="text" id="edit-esa-topic" class="w-full cyber-input rounded-lg p-2.5">
-                </div>
-                <div>
-                    <label class="block text-slate-400 mb-1">Backlog Subject Topic</label>
-                    <input type="text" id="edit-backlog-topic" class="w-full cyber-input rounded-lg p-2.5">
+                    <label class="block text-slate-400 mb-1">Secondary Study Block Title</label>
+                    <input type="text" id="edit-p2-topic" class="w-full cyber-input rounded-lg p-2.5">
                 </div>
                 <div class="flex gap-2 pt-2">
                     <button type="button" onclick="closeEditModal()" class="w-1/3 bg-slate-800 text-slate-300 py-2 rounded-lg font-mono">Cancel</button>
