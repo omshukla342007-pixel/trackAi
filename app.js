@@ -1,4 +1,4 @@
-// PESU ECE 3rd Sem AI Adaptive Day Engine v5.0
+// PESU ECE 3rd Sem AI Adaptive Engine v5.1
 
 let masterSchedule = {};
 let userProfile = {};
@@ -6,17 +6,25 @@ let userProfile = {};
 document.addEventListener("DOMContentLoaded", function () {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    document.getElementById("log-date").value = tomorrow.toISOString().split("T")[0];
+    const dateInput = document.getElementById("log-date");
+    if (dateInput) {
+        dateInput.value = tomorrow.toISOString().split("T")[0];
+    }
 
-    const savedProfile = localStorage.getItem("pesu_ece_profile_v5");
-    const savedSchedule = localStorage.getItem("pesu_ece_schedule_v5");
+    try {
+        const savedProfile = localStorage.getItem("pesu_ece_profile_v5");
+        const savedSchedule = localStorage.getItem("pesu_ece_schedule_v5");
 
-    if (savedProfile && savedSchedule) {
-        userProfile = JSON.parse(savedProfile);
-        masterSchedule = JSON.parse(savedSchedule);
-        document.getElementById("ai-modal").classList.add("hidden");
-        renderDayByDaySchedule();
-    } else {
+        if (savedProfile && savedSchedule) {
+            userProfile = JSON.parse(savedProfile);
+            masterSchedule = JSON.parse(savedSchedule);
+            document.getElementById("ai-modal").classList.add("hidden");
+            renderDayByDaySchedule();
+        } else {
+            document.getElementById("ai-modal").classList.remove("hidden");
+        }
+    } catch (e) {
+        console.error("Initialization error:", e);
         document.getElementById("ai-modal").classList.remove("hidden");
     }
 });
@@ -36,24 +44,31 @@ function reopenQuestionnaire() {
 }
 
 function finishOnboarding() {
+    const strongEl = document.getElementById("q-strong");
+    const weakEl = document.getElementById("q-weak");
+    const backlogEl = document.getElementById("q-backlog-names");
+    const hoursEl = document.getElementById("q-daily-hours");
+
     userProfile = {
-        strong: document.getElementById("q-strong").value || "Digital Logic, Tech Writing",
-        weak: document.getElementById("q-weak").value || "Maths for ECE, Analog Circuits, Signals & Systems",
-        backlogs: document.getElementById("q-backlog-names").value || "3 Backlog Subjects",
-        hours: parseFloat(document.getElementById("q-daily-hours").value) || 3.5
+        strong: strongEl ? strongEl.value : "Computer Aided Digital Design, Tech Writing",
+        weak: weakEl ? weakEl.value : "Maths for ECE, Analog Circuits, Signals & Systems",
+        backlogs: backlogEl ? backlogEl.value : "Math 1, Network Theory, EDC",
+        hours: hoursEl ? parseFloat(hoursEl.value) || 3.5 : 3.5
     };
 
     localStorage.setItem("pesu_ece_profile_v5", JSON.stringify(userProfile));
+    
     generateMasterSchedule();
+    
     document.getElementById("ai-modal").classList.add("hidden");
 }
 
 function generateMasterSchedule() {
     masterSchedule = {};
 
-    const startDate = new Date(2026, 9, 28); // Oct 28, 2026
-    const isaEndDate = new Date(2026, 10, 28); // Nov 28, 2026 (ISA 2 LWD)
-    const endDate = new Date(2026, 11, 31);   // Dec 31, 2026
+    const startDate = new Date(2026, 9, 28);   // Oct 28, 2026
+    const isaEndDate = new Date(2026, 10, 28);  // Nov 28, 2026
+    const endDate = new Date(2026, 11, 31);    // Dec 31, 2026
 
     let curr = new Date(startDate);
     let dayCount = 1;
@@ -64,11 +79,10 @@ function generateMasterSchedule() {
 
     while (curr <= endDate) {
         const dateKey = curr.toISOString().split("T")[0];
-        const month = curr.getMonth(); // 10 = Nov, 11 = Dec
+        const month = curr.getMonth(); // 9 = Oct, 10 = Nov, 11 = Dec
         const dateNum = curr.getDate();
 
         let isTravel = (month === 10 && (dateNum === 6 || dateNum === 10));
-        let isHoliday = (month === 10 && (dateNum === 9 || dateNum === 10)); // Deepavali
         let isISA2Week = (month === 10 && dateNum >= 23 && dateNum <= 28);
         let postISA2 = curr > isaEndDate;
 
@@ -86,8 +100,6 @@ function generateMasterSchedule() {
             isaTitle = `ISA 2 EXAM SPRINT: ${weakTopics[(dayCount) % weakTopics.length].trim()}`;
         }
 
-        // Sequential Goal Sunset Rule:
-        // After Nov 28, ISA 2 Goal vanishes and its time is re-allocated to ESA + Backlogs
         if (postISA2) {
             masterSchedule[dateKey] = {
                 dayNum: dayCount,
@@ -96,7 +108,7 @@ function generateMasterSchedule() {
                 postISA: true,
                 isTravel: isTravel,
                 block1: { label: "ESA PREP (Re-Allocated ISA Time)", title: esaTitle, duration: (dailyHours * 0.65).toFixed(1) },
-                block2: { label: "BACKLOG FOCUS", title: backlogTopic, duration: (dailyHours * 0.35).toFixed(1) }
+                block2: { label: "BACKLOG FOCUS", title: backlogTitle, duration: (dailyHours * 0.35).toFixed(1) }
             };
         } else {
             masterSchedule[dateKey] = {
@@ -121,10 +133,13 @@ function generateMasterSchedule() {
 
 function renderDayByDaySchedule() {
     const container = document.getElementById("day-by-day-container");
+    if (!container) return;
+    
     container.innerHTML = "";
 
     const keys = Object.keys(masterSchedule).sort();
-    document.getElementById("total-days-badge").innerText = `${keys.length} Days Active`;
+    const badge = document.getElementById("total-days-badge");
+    if (badge) badge.innerText = `${keys.length} Days Active`;
 
     keys.forEach(dateKey => {
         const day = masterSchedule[dateKey];
@@ -188,14 +203,19 @@ function renderDayByDaySchedule() {
 }
 
 function recalibrateDay() {
-    const dateKey = document.getElementById("log-date").value;
+    const dateInput = document.getElementById("log-date");
+    const dateKey = dateInput ? dateInput.value : "";
+    
     if (!masterSchedule[dateKey]) {
         alert("Date outside active schedule range.");
         return;
     }
 
-    const energy = parseInt(document.getElementById("log-energy").value);
-    const disruption = document.getElementById("log-disruption").value.trim();
+    const energyEl = document.getElementById("log-energy");
+    const disruptionEl = document.getElementById("log-disruption");
+
+    const energy = energyEl ? parseInt(energyEl.value) : 7;
+    const disruption = disruptionEl ? disruptionEl.value.trim() : "";
 
     let day = masterSchedule[dateKey];
     if (energy <= 4) {
